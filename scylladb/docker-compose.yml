@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  scylla:
+    image: scylladb/scylla:latest
+    environment:
+      SCYLLA_USERNAME: "dev_user"
+      SCYLLA_PASSWORD: "dev_password"
+    ports:
+      - "9042:9042"
+    volumes:
+      - scylla_data:/var/lib/scylla
+volumes:
+  scylla_data:
