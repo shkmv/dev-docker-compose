@@ -1,19 +1,58 @@
-.PHONY: service start stop logs
+.PHONY: service start stop down logs
+
+SERVICE_NAMES = scylladb
 
 service:
-	@echo "Available services:"
-	@echo "- scylladb"
-	@read -p "Enter service name: " service; \
-	docker-compose -f $$service/docker-compose.yml up -d
+	@echo "Available services: $(SERVICE_NAMES)"
 
 start:
-	@read -p "Enter service name: " service; \
-	docker-compose -f $$service/docker-compose.yml up -d
+	@if [ -z "$(services)" ]; then \
+		echo "Please specify service names using 'make start services=\"service1 service2\"'"; \
+	else \
+		for service in $(services); do \
+			if [ -f $$service/docker-compose.yml ]; then \
+				docker-compose -f $$service/docker-compose.yml up -d; \
+			else \
+				echo "Service $$service not found!"; \
+			fi \
+		done \
+	fi
 
 stop:
-	@read -p "Enter service name: " service; \
-	docker-compose -f $$service/docker-compose.yml down
+	@if [ -z "$(services)" ]; then \
+		echo "Please specify service names using 'make stop services=\"service1 service2\"'"; \
+	else \
+		for service in $(services); do \
+			if [ -f $$service/docker-compose.yml ]; then \
+				docker-compose -f $$service/docker-compose.yml stop; \
+			else \
+				echo "Service $$service not found!"; \
+			fi \
+		done \
+	fi
+
+down:
+	@if [ -z "$(services)" ]; then \
+		echo "Please specify service names using 'make down services=\"service1 service2\"'"; \
+	else \
+		for service in $(services); do \
+			if [ -f $$service/docker-compose.yml ]; then \
+				docker-compose -f $$service/docker-compose.yml down -v; \
+			else \
+				echo "Service $$service not found!"; \
+			fi \
+		done \
+	fi
 
 logs:
-	@read -p "Enter service name: " service; \
-	docker-compose -f $$service/docker-compose.yml logs -f
+	@if [ -z "$(services)" ]; then \
+		echo "Please specify service names using 'make logs services=\"service1 service2\"'"; \
+	else \
+		for service in $(services); do \
+			if [ -f $$service/docker-compose.yml ]; then \
+				docker-compose -f $$service/docker-compose.yml logs -f; \
+			else \
+				echo "Service $$service not found!"; \
+			fi \
+		done \
+	fi
