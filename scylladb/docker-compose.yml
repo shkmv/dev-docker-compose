@@ -1,14 +1,49 @@
 version: '3'
 
 services:
-  scylla:
+  scylla-node1:
     image: scylladb/scylla:latest
     environment:
       SCYLLA_USERNAME: "dev_user"
       SCYLLA_PASSWORD: "dev_password"
+      SEEDS: "scylla-node1,scylla-node2,scylla-node3"
+      SCYLLA_API_ADDRESS: "scylla-node1"
     ports:
       - "9042:9042"
     volumes:
-      - scylla_data:/var/lib/scylla
+      - scylla_data_node1:/var/lib/scylla
+    networks:
+      - scylla_net
+
+  scylla-node2:
+    image: scylladb/scylla:latest
+    environment:
+      SCYLLA_USERNAME: "dev_user"
+      SCYLLA_PASSWORD: "dev_password"
+      SEEDS: "scylla-node1,scylla-node2,scylla-node3"
+      SCYLLA_API_ADDRESS: "scylla-node2"
+    volumes:
+      - scylla_data_node2:/var/lib/scylla
+    networks:
+      - scylla_net
+
+  scylla-node3:
+    image: scylladb/scylla:latest
+    environment:
+      SCYLLA_USERNAME: "dev_user"
+      SCYLLA_PASSWORD: "dev_password"
+      SEEDS: "scylla-node1,scylla-node2,scylla-node3"
+      SCYLLA_API_ADDRESS: "scylla-node3"
+    volumes:
+      - scylla_data_node3:/var/lib/scylla
+    networks:
+      - scylla_net
+
 volumes:
-  scylla_data:
+  scylla_data_node1:
+  scylla_data_node2:
+  scylla_data_node3:
+
+networks:
+  scylla_net:
+    driver: bridge
